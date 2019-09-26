@@ -1,9 +1,11 @@
 # NATS.RPC
 
+**WORK IN PROGRESS**
+
 Lightweight RPC over NATS realization, based on contracts (native .NET interfaces) with runtime service proxy generation.
 
-Contract:
-```
+**Contract:**
+```C#
   public interface ITest
   {
       string Echo(string msg);
@@ -11,8 +13,8 @@ Contract:
   }
 ```
 
-Contract implementation (Service):
-```
+**Contract implementation (Service):**
+```C#
   public class Test : ITest
   {
       public string Echo(string msg)
@@ -28,8 +30,8 @@ Contract implementation (Service):
   }
 ```
 
-Service creation:
-```
+**Service creation:**
+```C#
   var connectionFactory = new ConnectionFactory();
   var serviceFactory = new ServiceFactory(connectionFactory);
   var test = new Test();
@@ -41,14 +43,14 @@ Service creation:
   service.Stop();
 ```
 
-Proxy creation:
-```
+**Proxy creation:**
+```C#
   var proxyFactory = new ProxyFactory(connectionFactory);
   var proxy = proxyFactory.Create<ITest>(ProxyOptions.Default);
 ```
 
-Proxy usage:
-```
+**Proxy usage:**
+```C#
   var response = proxy.Echo("Hello World!");
 
   System.Console.WriteLine($"Echo response: {response}");
