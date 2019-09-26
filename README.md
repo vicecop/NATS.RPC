@@ -12,6 +12,10 @@ Lightweight .NET C# RPC-over-NATS realization, based on contracts (native .NET i
 + NATS.Client 0.9.0
 + Newtonsoft.Json 12.0.2
 
+---
+
+## Example
+
 **Contract:**
 ```C#
   public interface ITest
