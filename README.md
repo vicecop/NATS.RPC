@@ -51,8 +51,6 @@ Lightweight .NET C# RPC-over-[NATS](https://nats.io/) realization, based on cont
   var service = serviceFactory.Create<ITest, Test>(test, ServiceOptions.Default);
 
   service.Start();
-  
-  service.Stop();
 ```
 
 **Proxy creation:**
