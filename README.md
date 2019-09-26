@@ -2,7 +2,7 @@
 
 **WORK IN PROGRESS**
 
-Lightweight .NET C# RPC-over-NATS realization, based on contracts (native .NET interfaces) with runtime service proxy generation.
+Lightweight .NET C# RPC-over-[NATS](https://nats.io/) realization, based on contracts (native .NET interfaces) with runtime service proxy generation.
 
 **Target framework:**
 + netstandard 2.0
