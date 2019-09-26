@@ -5,7 +5,7 @@
 Lightweight .NET C# RPC-over-NATS realization, based on contracts (native .NET interfaces) with runtime service proxy generation.
 
 **Target framework:**
-+ netstandard2.0
++ netstandard 2.0
   
 **Dependencies:**
 + Castle.Core 4.4.0
