@@ -27,30 +27,21 @@ namespace NATS.RPC.Console
         static void Main(string[] args)
         {
             var connectionFactory = new ConnectionFactory();
-            var url = "nats://localhost:4222";
-            var serviceUid = "Test";
-            //var serviceUid1 = "Test1";
-
-            var serviceFactory = new ServiceFactory(connectionFactory, url);
+            var serviceFactory = new ServiceFactory(connectionFactory);
             var test = new Test();
 
-            serviceFactory.Create<ITest, Test>(test, serviceUid);
-            //serviceFactory.Create<ITest, Test>(test, serviceUid1);
+            var service = serviceFactory.Create<ITest, Test>(test, ServiceOptions.Default);
 
-            var proxyFactory = new ProxyFactory(connectionFactory, url);
-            var proxy = proxyFactory.Create<ITest>(serviceUid);
-            //var proxy1 = proxyFactory.Create<ITest>(serviceUid1);
+            service.Start();
+
+            var proxyFactory = new ProxyFactory(connectionFactory);
+            var proxy = proxyFactory.Create<ITest>(ProxyOptions.Default);
 
             var response = proxy.Echo("Hello World!");
 
             System.Console.WriteLine($"Echo response: {response}");
 
             proxy.Rpc("RPC", 100);
-
-            //response = proxy1.Echo("!@#");
-
-            //System.Console.WriteLine($"Echo response: {response}");
-
         }
     }
 }
