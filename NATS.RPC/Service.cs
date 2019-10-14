@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NATS.RPC
 {
@@ -43,7 +44,7 @@ namespace NATS.RPC
             foreach(var method in ContractType.GetMethods())
             {
                 var subscription = _connection.SubscribeAsync($"{ServiceUid}.{ContractType.Name}.{method.Name}");
-                subscription.MessageHandler += (sender, args) =>
+                subscription.MessageHandler += async (sender, args) =>
                 {
                     var json = Encoding.UTF8.GetString(args.Message.Data);
                     var jToken = JToken.Parse(json);
@@ -57,6 +58,16 @@ namespace NATS.RPC
                     }
 
                     var result = method.Invoke(ContractImplementaion, arguments);
+
+                    if(typeof(Task).IsAssignableFrom(method.ReturnType))
+                    {
+                        var task = (Task)result;
+
+                        await task;
+
+                        var prop = method.ReturnType.GetProperty("Result");
+                        result = prop?.GetValue(task);
+                    }
 
                     json = JsonConvert.SerializeObject(result);
                     var bytes = Encoding.UTF8.GetBytes(json);
@@ -78,7 +89,7 @@ namespace NATS.RPC
 
         public void Stop()
         {
-            _connection.Close();
+            _connection.Drain();
         }
     }
 }
