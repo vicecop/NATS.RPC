@@ -6,7 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NATS.RPC\NATS.RPC.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NATS.RPC.Service\NATS.RPC.Service.csproj" />
+    <ProjectReference Include="..\NATS.RPC\NATS.RPC.Proxy.csproj" />
   </ItemGroup>
 
 </Project>

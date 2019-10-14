@@ -1,4 +1,4 @@
-﻿namespace NATS.RPC
+﻿namespace NATS.RPC.Service
 {
     public class ServiceOptions
     {

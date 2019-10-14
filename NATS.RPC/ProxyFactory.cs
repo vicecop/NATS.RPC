@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace NATS.RPC
+namespace NATS.RPC.Proxy
 {
     public class ProxyFactory
     {
@@ -24,7 +24,7 @@ namespace NATS.RPC
 
             var connection = _connectionFactory.CreateConnection(options.ConnectionString);
 
-            return Proxy.CreateProxy<T>(async invocation =>
+            return SexyProxy.Proxy.CreateProxy<T>(async invocation =>
             {
                 var json = JsonConvert.SerializeObject(invocation.Arguments);
                 var bytes = Encoding.UTF8.GetBytes(json);
@@ -39,9 +39,9 @@ namespace NATS.RPC
 
                 Type type;
 
-                if(invocation.HasFlag(InvocationFlags.Async))
+                if (invocation.HasFlag(InvocationFlags.Async))
                 {
-                    if(invocation.Method.ReturnType.IsGenericType)
+                    if (invocation.Method.ReturnType.IsGenericType)
                     {
                         type = invocation.Method.ReturnType.GetGenericArguments().Single();
                     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NATS.RPC
+namespace NATS.RPC.Proxy
 {
     public class ProxyOptions
     {

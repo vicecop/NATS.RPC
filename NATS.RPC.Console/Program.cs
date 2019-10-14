@@ -1,4 +1,8 @@
-﻿using NATS.Client;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NATS.Client;
+using NATS.RPC.Proxy;
+using NATS.RPC.Service;
 using System.Threading.Tasks;
 
 namespace NATS.RPC.Console
@@ -41,14 +45,15 @@ namespace NATS.RPC.Console
     {
         static void Main(string[] args)
         {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddNatsRpc(config => config.AddContractHandler<ITest, Test>());
+            var provider = serviceCollection.BuildServiceProvider();
+            var serviceHost = provider.GetRequiredService<IHostedService>();
+            var cts = new System.Threading.CancellationTokenSource();
+            var token = cts.Token;
+            serviceHost.StartAsync(token);
+
             var connectionFactory = new ConnectionFactory();
-            var serviceFactory = new ServiceFactory(connectionFactory);
-            var test = new Test();
-
-            var service = serviceFactory.Create<ITest, Test>(test, ServiceOptions.Default);
-
-            service.Start();
-
             var proxyFactory = new ProxyFactory(connectionFactory);
             var proxy = proxyFactory.Create<ITest>(ProxyOptions.Default);
 
@@ -65,6 +70,9 @@ namespace NATS.RPC.Console
             proxy.RpcAsync("Async RPC", 101).GetAwaiter().GetResult();
 
             System.Console.ReadLine();
+
+            cts.Cancel();
+            cts.Dispose();
         }
     }
 }
