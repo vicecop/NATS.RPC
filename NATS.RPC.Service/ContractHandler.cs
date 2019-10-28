@@ -52,11 +52,11 @@ namespace NATS.RPC.Service
                     }
 
                     object result;
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var contractImplementaion = _contractImplFactory.Invoke(scope.ServiceProvider, Array.Empty<object>());
-                        result = method.Invoke(contractImplementaion, arguments);
-                    }
+
+                    var scope = _serviceProvider.CreateScope();
+
+                    var contractImplementaion = _contractImplFactory.Invoke(scope.ServiceProvider, Array.Empty<object>());
+                    result = method.Invoke(contractImplementaion, arguments);
 
                     if (typeof(Task).IsAssignableFrom(method.ReturnType))
                     {
@@ -64,9 +64,13 @@ namespace NATS.RPC.Service
 
                         await task;
 
+                        scope.Dispose();
+
                         var prop = method.ReturnType.GetProperty("Result");
                         result = prop?.GetValue(task);
                     }
+
+                    scope.Dispose();
 
                     json = JsonConvert.SerializeObject(result);
                     var bytes = Encoding.UTF8.GetBytes(json);

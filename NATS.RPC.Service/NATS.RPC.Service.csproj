@@ -2,6 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Product>NATS.RPC.Service</Product>
+    <Description>Lightweight .NET C# RPC-over-NATS realization, based on contracts (native .NET interfaces) with runtime service proxy generation.
+Service-side library.</Description>
+    <PackageId>NATS.RPC.Service</PackageId>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageReleaseNotes>ServiceProvider scope fix</PackageReleaseNotes>
+    <Version>1.0.1</Version>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <Company>NATS.RPC.Service</Company>
+    <Authors>NATS.RPC.Service</Authors>
   </PropertyGroup>
 
   <ItemGroup>

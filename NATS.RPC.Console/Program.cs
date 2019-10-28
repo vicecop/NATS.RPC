@@ -14,6 +14,13 @@ namespace NATS.RPC.Console
 
         Task<string> EchoAsync(string msg);
         Task RpcAsync(string msg, int id);
+
+        Task<TestModel> EchoModel(TestModel testModel);
+
+        public class TestModel
+        {
+            public string Name { get; set; }
+        }
     }
 
     internal class Test : ITest
@@ -27,6 +34,11 @@ namespace NATS.RPC.Console
         public Task<string> EchoAsync(string msg)
         {
             return Task.FromResult(Echo(msg));
+        }
+
+        public Task<ITest.TestModel> EchoModel(ITest.TestModel testModel)
+        {
+            return Task.FromResult(testModel);
         }
 
         public void Rpc(string msg, int id)
@@ -68,6 +80,15 @@ namespace NATS.RPC.Console
             System.Console.WriteLine($"Echo response: {responseTask.GetAwaiter().GetResult()}");
 
             proxy.RpcAsync("Async RPC", 101).GetAwaiter().GetResult();
+
+            var model = new ITest.TestModel()
+            {
+                Name = "TEST"
+            };
+
+            var echoModel = proxy.EchoModel(model).Result;
+
+            System.Console.WriteLine($"Async echo model: {echoModel.Name}");
 
             System.Console.ReadLine();
 
