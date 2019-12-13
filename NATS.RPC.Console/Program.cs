@@ -58,6 +58,7 @@ namespace NATS.RPC.Console
         static void Main(string[] args)
         {
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddLogging();
             serviceCollection.AddNatsRpc(config => config.AddContractHandler<ITest, Test>());
             var provider = serviceCollection.BuildServiceProvider();
             var serviceHost = provider.GetRequiredService<IHostedService>();
