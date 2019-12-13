@@ -7,8 +7,8 @@
 Service-side library.</Description>
     <PackageId>NATS.RPC.Service</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>ServiceProvider scope fix</PackageReleaseNotes>
-    <Version>1.0.2</Version>
+    <PackageReleaseNotes>ContractHandler exception handling and logging</PackageReleaseNotes>
+    <Version>1.0.3</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>NATS.RPC.Service</Company>
     <Authors>NATS.RPC.Service</Authors>

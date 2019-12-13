@@ -25,7 +25,7 @@ namespace NATS.RPC.Service
         public ContractHandler(ILogger<ContractHandler> logger, IServiceProvider serviceProvider, Type contractType, 
             string baseRoute, ObjectFactory contractImplFactory)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger;
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
             ContractType = contractType ?? throw new ArgumentNullException(nameof(contractType));
@@ -82,7 +82,7 @@ namespace NATS.RPC.Service
                     }
                     catch(Exception ex)
                     {
-                        _logger.LogError(ex, "Unhandled exception during rpc-request has occured");
+                        _logger?.LogError(ex, "Unhandled exception during rpc-request has occured");
                     }
                 };
 

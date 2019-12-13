@@ -44,7 +44,7 @@ namespace NATS.RPC.Service
             var contractImplFactory = factory != null ? factory.Invoke(_serviceProvider) : 
                 ActivatorUtilities.CreateFactory(typeof(TImplementation), Array.Empty<Type>());
 
-            var handlerLogger = _serviceProvider.GetRequiredService<ILogger<ContractHandler>>();
+            var handlerLogger = _serviceProvider.GetService<ILogger<ContractHandler>>();
             var handler = new ContractHandler(handlerLogger, _serviceProvider, typeof(TContract), _serviceOptions.ServiceUid, contractImplFactory);
             _contractHandlers.Add(handler);
 
