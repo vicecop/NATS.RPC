@@ -4,6 +4,7 @@ using SexyProxy;
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace NATS.RPC.Proxy
 {
@@ -36,7 +37,7 @@ namespace NATS.RPC.Proxy
                 var bytes = Encoding.UTF8.GetBytes(json);
                 var subject = $"{options.ServiceUid}.{typeof(T).Name}.{invocation.Method.Name}";
 
-                var response = await connection.RequestAsync(subject, bytes, options.Timeout);
+                var response = await connection.RequestAsync(subject, bytes, options.TimeoutMs);
 
                 if (invocation.Method.ReturnType == typeof(void))
                     return null;

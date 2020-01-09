@@ -62,15 +62,15 @@ namespace NATS.RPC.Console
     {
         static async Task Main(string[] args)
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging();
-            serviceCollection.AddNatsRpc(config => config.AddContractHandler<ITest, Test>());
-            var provider = serviceCollection.BuildServiceProvider();
-            var serviceHost = provider.GetRequiredService<IHostedService>();
-            var cts = new System.Threading.CancellationTokenSource();
-            var token = cts.Token;
+            //var serviceCollection = new ServiceCollection();
+            //serviceCollection.AddLogging();
+            //serviceCollection.AddNatsRpc(config => config.AddContractHandler<ITest, Test>());
+            //var provider = serviceCollection.BuildServiceProvider();
+            //var serviceHost = provider.GetRequiredService<IHostedService>();
+            //var cts = new System.Threading.CancellationTokenSource();
+            //var token = cts.Token;
 
-            await serviceHost.StartAsync(token);
+            //await serviceHost.StartAsync(token);
 
             var connectionFactory = new ConnectionFactory();
             var proxyFactory = new ProxyFactory(connectionFactory);
@@ -101,10 +101,10 @@ namespace NATS.RPC.Console
 
             proxy.Dispose();
 
-            await serviceHost.StopAsync(token);
+            //await serviceHost.StopAsync(token);
 
-            cts.Cancel();
-            cts.Dispose();
+            //cts.Cancel();
+            //cts.Dispose();
         }
     }
 }

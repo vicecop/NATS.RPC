@@ -6,7 +6,7 @@
         {
             ServiceUid = "default",
             ConnectionString = "nats://localhost:4222",
-            Timeout = 1
+            TimeoutMs = 5000
         };
 
         /// <summary>
@@ -20,6 +20,6 @@
         /// <summary>
         /// Request timeout (seconds)
         /// </summary>
-        public int Timeout { get; set; }
+        public int TimeoutMs { get; set; }
     }
 }
