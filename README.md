@@ -19,7 +19,7 @@ Lightweight RPC-over-[NATS](https://nats.io/) realization, based on contracts (n
 
 **Contract:**
 ```C#
-  public interface ITest
+  public interface ITest, : IDisposable
   {
       //Sync
       string Echo(string msg);
@@ -33,7 +33,7 @@ Lightweight RPC-over-[NATS](https://nats.io/) realization, based on contracts (n
 
 **Contract implementation (Service):**
 ```C#
-  public class Test : ITest
+  public sealed class Test : ITest
   {
       public string Echo(string msg)
       {
@@ -55,6 +55,10 @@ Lightweight RPC-over-[NATS](https://nats.io/) realization, based on contracts (n
       {
           Rpc(msg, id);
           return Task.CompletedTask;
+      }
+      
+      public void Dispose()
+      {
       }
   }
 ```
