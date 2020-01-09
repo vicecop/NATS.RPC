@@ -19,7 +19,7 @@ Lightweight RPC-over-[NATS](https://nats.io/) realization, based on contracts (n
 
 **Contract:**
 ```C#
-  public interface ITest, : IDisposable
+  public interface ITest : IDisposable
   {
       //Sync
       string Echo(string msg);
