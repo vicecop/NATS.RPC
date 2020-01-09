@@ -3,11 +3,12 @@ using Microsoft.Extensions.Hosting;
 using NATS.Client;
 using NATS.RPC.Proxy;
 using NATS.RPC.Service;
+using System;
 using System.Threading.Tasks;
 
 namespace NATS.RPC.Console
 {
-    public interface ITest
+    public interface ITest : IDisposable
     {
         string Echo(string msg);
         void Rpc(string msg, int id);
@@ -25,6 +26,10 @@ namespace NATS.RPC.Console
 
     internal class Test : ITest
     {
+        public void Dispose()
+        {
+        }
+
         public string Echo(string msg)
         {
             System.Console.WriteLine($"Echo: {msg}");
@@ -55,7 +60,7 @@ namespace NATS.RPC.Console
 
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddLogging();
@@ -64,7 +69,8 @@ namespace NATS.RPC.Console
             var serviceHost = provider.GetRequiredService<IHostedService>();
             var cts = new System.Threading.CancellationTokenSource();
             var token = cts.Token;
-            serviceHost.StartAsync(token);
+
+            await serviceHost.StartAsync(token);
 
             var connectionFactory = new ConnectionFactory();
             var proxyFactory = new ProxyFactory(connectionFactory);
@@ -78,20 +84,24 @@ namespace NATS.RPC.Console
 
             var responseTask = proxy.EchoAsync("Hello World Async!");
 
-            System.Console.WriteLine($"Echo response: {responseTask.GetAwaiter().GetResult()}");
+            System.Console.WriteLine($"Echo response: {await responseTask}");
 
-            proxy.RpcAsync("Async RPC", 101).GetAwaiter().GetResult();
+            await proxy.RpcAsync("Async RPC", 101);
 
             var model = new ITest.TestModel()
             {
                 Name = "TEST"
             };
 
-            var echoModel = proxy.EchoModel(model).Result;
+            var echoModel = await proxy.EchoModel(model);
 
             System.Console.WriteLine($"Async echo model: {echoModel.Name}");
 
             System.Console.ReadLine();
+
+            proxy.Dispose();
+
+            await serviceHost.StopAsync(token);
 
             cts.Cancel();
             cts.Dispose();

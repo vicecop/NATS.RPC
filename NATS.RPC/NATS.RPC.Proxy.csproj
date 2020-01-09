@@ -7,8 +7,9 @@
 Client generation library.</Description>
     <PackageId>NATS.RPC.Proxy</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Init</PackageReleaseNotes>
-    <Version>1.0.0</Version>
+    <PackageReleaseNotes>Request timeout added;
+From now, all service interfaces must be iherited from IDisposable;</PackageReleaseNotes>
+    <Version>1.0.1</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>Alexey "ViceCop" Volodin</Company>
     <Authors>Alexey "ViceCop" Volodin</Authors>

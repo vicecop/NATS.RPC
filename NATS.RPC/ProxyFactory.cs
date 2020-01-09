@@ -7,7 +7,7 @@ using System.Text;
 
 namespace NATS.RPC.Proxy
 {
-    public class ProxyFactory
+    public sealed class ProxyFactory
     {
         private readonly ConnectionFactory _connectionFactory;
 
@@ -17,7 +17,7 @@ namespace NATS.RPC.Proxy
         }
 
         public T Create<T>(ProxyOptions options)
-            where T : class
+            where T : class, IDisposable
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
@@ -26,11 +26,17 @@ namespace NATS.RPC.Proxy
 
             return SexyProxy.Proxy.CreateProxy<T>(async invocation =>
             {
+                if(invocation.Method.Name == "Dispose")
+                {
+                    connection.Close();
+                    return null;
+                }
+
                 var json = JsonConvert.SerializeObject(invocation.Arguments);
                 var bytes = Encoding.UTF8.GetBytes(json);
                 var subject = $"{options.ServiceUid}.{typeof(T).Name}.{invocation.Method.Name}";
 
-                var response = await connection.RequestAsync(subject, bytes);
+                var response = await connection.RequestAsync(subject, bytes, options.Timeout);
 
                 if (invocation.Method.ReturnType == typeof(void))
                     return null;
