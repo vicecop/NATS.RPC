@@ -10,8 +10,7 @@ Lightweight RPC-over-[NATS](https://nats.io/) realization, based on contracts (n
 **Dependencies:**
 + Microsoft.Extensions.DependencyInjection.Abstractions 3.0.0
 + Microsoft.Extensions.Hosting.Abstractions 3.0.0
-+ Castle.Core 4.4.0
-+ NATS.Client 0.9.0
++ SexyProxy 2.0.110
 + Newtonsoft.Json 12.0.2
 
 ---
