@@ -20,4 +20,8 @@ Client generation library.</Description>
     <PackageReference Include="SexyProxy" Version="2.0.110" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NATS.RPC.Shared\NATS.RPC.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

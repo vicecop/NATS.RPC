@@ -1,10 +1,10 @@
 ﻿using NATS.Client;
-using Newtonsoft.Json;
+using NATS.RPC.Shared;
 using SexyProxy;
 using System;
+using System.Buffers;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace NATS.RPC.Proxy
 {
@@ -17,32 +17,32 @@ namespace NATS.RPC.Proxy
             _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
         }
 
-        public T Create<T>(ProxyOptions options)
+        public T Create<T>(ISerializer serializer, IDeserializer deserialzer, ProxyOptions options)
             where T : class, IDisposable
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
             var connection = _connectionFactory.CreateConnection(options.ConnectionString);
+            var arrayPool = ArrayPool<byte>.Shared;
 
             return SexyProxy.Proxy.CreateProxy<T>(async invocation =>
             {
-                if(invocation.Method.Name == "Dispose")
+                if (invocation.Method.Name == "Dispose")
                 {
                     connection.Close();
                     return null;
                 }
 
-                var json = JsonConvert.SerializeObject(invocation.Arguments);
-                var bytes = Encoding.UTF8.GetBytes(json);
+                var parameters = invocation.Method.GetParameters();
+
+                var argBytes = serializer.SerializeObjects(invocation.Arguments);
                 var subject = $"{options.ServiceUid}.{typeof(T).Name}.{invocation.Method.Name}";
 
-                var response = await connection.RequestAsync(subject, bytes, options.TimeoutMs);
+                var response = await connection.RequestAsync(subject, argBytes, options.TimeoutMs);
 
                 if (invocation.Method.ReturnType == typeof(void))
                     return null;
-
-                json = Encoding.UTF8.GetString(response.Data);
 
                 Type type;
 
@@ -62,9 +62,18 @@ namespace NATS.RPC.Proxy
                     type = invocation.Method.ReturnType;
                 }
 
-                var result = JsonConvert.DeserializeObject(json, type);
+                var result = deserialzer.DeserialzeObject(response.Data, type);
+
                 return result;
             }, asyncMode: AsyncInvocationMode.Wait);
+        }
+
+        public T Create<T>(ProxyOptions options)
+            where T : class, IDisposable
+        {
+            var serializer = new Shared.JsonSerializer();
+            var deserializer = new JsonDeserializer();
+            return Create<T>(serializer, deserializer, options);
         }
     }
 }

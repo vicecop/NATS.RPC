@@ -2,7 +2,7 @@
 {
     public class ServiceOptions
     {
-        public static ServiceOptions Default = new ServiceOptions()
+        public static ServiceOptions Default => new ServiceOptions()
         {
             ServiceUid = "default",
             ConnectionString = "nats://localhost:4222"

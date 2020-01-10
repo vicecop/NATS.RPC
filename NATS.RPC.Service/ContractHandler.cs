@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NATS.Client;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using NATS.RPC.Shared;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NATS.RPC.Service
@@ -22,7 +22,11 @@ namespace NATS.RPC.Service
         public Type ContractType { get; }
         public object ContractImplementaion { get; }
 
-        public ContractHandler(ILogger<ContractHandler> logger, IServiceProvider serviceProvider, Type contractType, 
+        private ISerializer _serializer;
+        private IDeserializer _deserialzer;
+
+        public ContractHandler(ILogger<ContractHandler> logger, IServiceProvider serviceProvider, 
+            ISerializer serializer, IDeserializer deserialzer, Type contractType, 
             string baseRoute, ObjectFactory contractImplFactory)
         {
             _logger = logger;
@@ -33,6 +37,9 @@ namespace NATS.RPC.Service
             HandlerRoute = $"{BaseRoute}.{ContractType.Name}";
 
             _contractImplFactory = contractImplFactory ?? throw new ArgumentNullException(nameof(contractImplFactory));
+
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            _deserialzer = deserialzer ?? throw new ArgumentNullException(nameof(deserialzer));
         }
 
         public IEnumerable<IAsyncSubscription> Subscribe(IConnection connection)
@@ -46,16 +53,8 @@ namespace NATS.RPC.Service
                 {
                     try
                     {
-                        var json = Encoding.UTF8.GetString(args.Message.Data);
-                        var jToken = JToken.Parse(json);
-
-                        var parameters = method.GetParameters();
-                        var arguments = new object[parameters.Length];
-
-                        for (int i = 0; i < parameters.Length; i++)
-                        {
-                            arguments[i] = jToken[i].ToObject(parameters[i].ParameterType);
-                        }
+                        var parameterTypes = method.GetParameters().Select(p => p.ParameterType).ToArray();
+                        var arguments = _deserialzer.DeserialzeObjects(args.Message.Data, parameterTypes);
 
                         object result;
 
@@ -75,8 +74,7 @@ namespace NATS.RPC.Service
                             }
                         }
 
-                        json = JsonConvert.SerializeObject(result);
-                        var bytes = Encoding.UTF8.GetBytes(json);
+                        var bytes = _serializer.SerializeObject(result);
 
                         connection.Publish(args.Message.Reply, bytes);
                     }
