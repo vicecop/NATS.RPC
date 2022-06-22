@@ -16,7 +16,7 @@ Client generation library.</Description>
 
   <ItemGroup>
     <PackageReference Include="NATS.Client" Version="0.9.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SexyProxy" Version="2.0.110" />
   </ItemGroup>
 
